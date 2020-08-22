@@ -1,0 +1,11 @@
+dist/main.js
+
+# Vim swap files
+*.sw[o,p]
+
+# Node modules
+node_modules
+
+.vscode
+
+docs/
