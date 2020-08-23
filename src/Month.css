@@ -1,0 +1,15 @@
+.month {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.monthGrid {
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    grid-template-rows: repeat(5, auto);
+}
+
+.monthGrid * {
+    text-align: center;
+}
