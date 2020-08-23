@@ -1,0 +1,9 @@
+.calendar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.calendarPreamble {
+    padding: 1rem;
+}

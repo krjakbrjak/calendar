@@ -1,5 +1,11 @@
-import React from 'react';
+/**
+ * Entry point.
+ *
+ * @author Nikita Vakula <programmistov.programmist@gmail.com>
+ */
 
-const Calendar = () => <div>Calendar</div>;
+import Calendar from './Calendar';
 
-export default Calendar;
+export {
+    Calendar,
+};
