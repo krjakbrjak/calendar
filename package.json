@@ -1,5 +1,5 @@
 {
-    "name": "@vni/calendar",
+    "name": "@krjakbrjak/calendar",
     "version": "0.0.1",
     "description": "Simple calendar widget",
     "main": "dist/main.js",
@@ -71,5 +71,6 @@
         "setupFilesAfterEnv": [
             "<rootDir>/src/setupTests.js"
         ]
-    }
+    },
+    "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
