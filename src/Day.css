@@ -1,0 +1,23 @@
+.day {
+    padding: 1rem;
+}
+
+.day:hover {
+    background-color: var(--secondaryColor, gray);
+}
+
+.day.weekday {
+    color: var(--primaryColor, black);
+}
+
+.day.weekend {
+    opacity: 0.5;
+}
+
+.day.today {
+    background-color: var(--secondaryColor, gray);
+}
+
+.day.otherMonth {
+    opacity: 0.1;
+}
