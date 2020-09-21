@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Day from './Day';
-import { getWeekdays } from './helpers';
+import {
+    getWeekdays,
+    areDatesEqual,
+} from './helpers';
 
 import css from './Month.css';
 
@@ -46,6 +49,25 @@ const Month = ({
     day.setMonth(month);
     day.setDate(1);
 
+    const [selection, setSelection] = useState({
+        first: null,
+        second: null,
+        intermediate: null,
+    });
+
+    // Call onDateSelected only if selection has changed and
+    // if selection.first is selected and either selection.first
+    // or selection.intermediate is selected.
+    useEffect(() => {
+        if (onDateSelected) {
+            if (selection.first && selection.second) {
+                onDateSelected(selection.first, selection.second);
+            } else if (selection.first && selection.intermediate) {
+                onDateSelected(selection.first, selection.intermediate);
+            }
+        }
+    }, [selection]);
+
     // Generates a grid for the month
     const generateGrid = () => {
         const res = [];
@@ -60,19 +82,80 @@ const Month = ({
         return res;
     };
 
+    // Determines if the valus is within the
+    // selected range.
+    const isSelection = (value) => {
+        if (selectRange && selection.first) {
+            if (selection.second) {
+                return value >= selection.first && value <= selection.second;
+            }
+
+            return value >= selection.first && value <= selection.intermediate;
+        }
+
+        return false;
+    };
+
+    // Calculates the class for day's div container
+    const getClassName = (value) => {
+        let className = 'dayContainer';
+        if (isSelection(value)) {
+            className = `${className} ${css.selection}`;
+        }
+
+        return className;
+    };
+
     return (
         <div className={css.month}>
             <div className={css.monthGrid}>
                 {getWeekdays().map((el) => <div key={el}>{el}</div>)}
-                {generateGrid().map((el) => (
-                    <Day
-                        onSelected={onDateSelected}
-                        key={el}
-                        year={year}
-                        month={month}
-                        date={el}
-                    />
-                ))}
+                {generateGrid().map((el) => {
+                    const d = new Date(year, month, el);
+                    return (
+                        <div
+                            key={d}
+                            onMouseEnter={() => setSelection({
+                                ...selection,
+                                intermediate: d,
+                            })}
+                            className={getClassName(d)}
+                        >
+                            <Day
+                                onSelected={(date) => {
+                                    if (selectRange === true) {
+                                        if (selection.first && selection.second) {
+                                            setSelection({
+                                                first: date,
+                                                second: null,
+                                            });
+                                        } else if (selection.first
+                                            && !areDatesEqual(selection.first, date)) {
+                                            setSelection({
+                                                ...selection,
+                                                second: date,
+                                            });
+                                        } else if (!selection.first) {
+                                            setSelection({
+                                                ...selection,
+                                                first: date,
+                                            });
+                                        }
+                                    } else {
+                                        setSelection({
+                                            first: date,
+                                            second: null,
+                                        });
+                                    }
+                                }}
+                                key={el}
+                                year={year}
+                                month={month}
+                                date={el}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
