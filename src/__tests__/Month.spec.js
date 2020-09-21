@@ -24,6 +24,7 @@ describe('Month', () => {
             wrapper = mount(<Month
                 month={timestamp.getMonth()}
                 year={timestamp.getFullYear()}
+                selectRange
             />);
         });
 
@@ -39,6 +40,7 @@ describe('Month', () => {
             wrapper = shallow(<Month
                 month={timestamp.getMonth()}
                 year={timestamp.getFullYear()}
+                selectRange
             />);
         });
 

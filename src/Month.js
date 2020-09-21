@@ -11,7 +11,8 @@ const NUMBER_OF_WEEKS = 6;
 
 /**
  * @callback Month.onDateSelected
- * @param {Date} date A date.
+ * @param {Date} first A date.
+ * @param {Date} [second=null] A date (if the range is selected).
  * @returns void
  */
 
@@ -21,6 +22,7 @@ const NUMBER_OF_WEEKS = 6;
  * @typedef {Object} Month.Props
  * @property {Integer} [year=Current year] An year
  * @property {Integer} [month=Current month] A month offset from the start of the year.
+ * @property {Boolean} selectRange An option to select either a single date or a rnage of dates.
  * @property {Month.onDateSelected} [onDateSelected=null] A callback that is executed when
  * {@link Day} component ({@link Month}'s child) is clicked.
  */
@@ -33,7 +35,12 @@ const NUMBER_OF_WEEKS = 6;
  * @param {Month.Props} props Properties
  * @component
  */
-const Month = ({ month, year, onDateSelected }) => {
+const Month = ({
+    month,
+    year,
+    selectRange,
+    onDateSelected,
+}) => {
     const day = new Date();
     day.setFullYear(year);
     day.setMonth(month);
@@ -74,6 +81,7 @@ const Month = ({ month, year, onDateSelected }) => {
 Month.propTypes = {
     year: PropTypes.number.isRequired,
     month: PropTypes.number.isRequired,
+    selectRange: PropTypes.bool.isRequired,
     onDateSelected: PropTypes.func,
 };
 
