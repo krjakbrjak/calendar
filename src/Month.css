@@ -13,3 +13,7 @@
 .monthGrid * {
     text-align: center;
 }
+
+.selection {
+    background-color: var(--accentColor, lightgray);
+}

@@ -82,6 +82,25 @@ const getWeekdays = ({ encoding = 'default', short = true } = {}) => {
     return days.map((el) => formatter.format(el));
 };
 
+/**
+ * Checks whether dates are same.
+ *
+ * @function areDatesEqual
+ * @param {Date} lhs A date
+ * @param {Date} rhs A date
+ * @returns {Boolean}
+ * @memberof helpers
+ */
+const areDatesEqual = (lhs, rhs) => (
+    lhs.getFullYear() === rhs.getFullYear()
+    && lhs.getMonth() === rhs.getMonth()
+    && lhs.getDate() === rhs.getDate()
+);
+
 export {
-    getToday, isToday, DateRange, getWeekdays,
+    getToday,
+    isToday,
+    DateRange,
+    getWeekdays,
+    areDatesEqual,
 };

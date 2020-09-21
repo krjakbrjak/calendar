@@ -32,7 +32,13 @@ const App = () => {
     return (
         <div style={{ display: 'flex' }}>
             <button onClick={prevMonth} style={style} type="button">&lt;</button>
-            <Calendar month={date.getMonth()} year={date.getFullYear()} />
+            <Calendar
+                month={date.getMonth()}
+                year={date.getFullYear()}
+                selectRange
+                onDateSelected={(first, second) => {
+                }}
+            />
             <button onClick={nextMonth} style={style} type="button">&gt;</button>
         </div>
     );

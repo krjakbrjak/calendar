@@ -3,6 +3,7 @@ import {
     isToday,
     DateRange,
     getWeekdays,
+    areDatesEqual,
 } from '../helpers';
 
 describe('Helpers', () => {
@@ -51,4 +52,10 @@ describe('Helpers', () => {
 
         expect(getWeekdays({short: false})).toEqual(weekdays);
     });
+
+    it('areDatesEqual', () => {
+        const today = new Date();
+        expect(areDatesEqual(today, new Date())).toBe(true);
+        expect(areDatesEqual(today, new Date(1988))).toBe(false);
+    })
 });
