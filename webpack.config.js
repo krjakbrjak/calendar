@@ -8,7 +8,7 @@ module.exports = (env = {}, { mode }) => {
     }
 
     return ({
-        entry: './src/index.js',
+        entry: path.resolve(__dirname, 'src/index.js'),
         output: {
             path: path.resolve('dist'),
             filename: 'main.js',
