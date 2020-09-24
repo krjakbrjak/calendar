@@ -71,6 +71,5 @@
         "setupFilesAfterEnv": [
             "<rootDir>/src/setupTests.js"
         ]
-    },
-    "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+    }
 }
