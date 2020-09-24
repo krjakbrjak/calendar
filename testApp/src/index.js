@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import Calendar from '../../src/Calendar';
+import { Calendar } from '@krjakbrjak/calendar';
 
 const App = () => {
     const [date, setDate] = useState(new Date());

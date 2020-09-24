@@ -4,14 +4,14 @@ module.exports = (env = {}) => {
     return ({
         devtool: 'inline-source-map',
         mode: 'development',
-        entry: './testApp/src/index.js',
+        entry: path.resolve(__dirname, 'src/index.js'),
         output: {
-            path: path.resolve('testApp/dist'),
+            path: path.resolve(__dirname, 'dist'),
             filename: 'index.js',
             publicPath: '/',
         },
         devServer: {
-            contentBase: 'testApp',
+            contentBase: __dirname,
             port: 9001,
             inline: true,
             hot: true,
@@ -21,7 +21,7 @@ module.exports = (env = {}) => {
                 {
                     test: /\.(js|jsx)$/,
                     exclude: /node_modules/,
-                    use: ['babel-loader', 'eslint-loader'],
+                    use: ['babel-loader'],
                 },
                 {
                     test: /\.css$/i,

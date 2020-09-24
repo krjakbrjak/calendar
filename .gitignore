@@ -9,5 +9,3 @@ node_modules
 .vscode
 
 docs/
-
-testApp/dist

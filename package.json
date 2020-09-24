@@ -46,7 +46,6 @@
     "scripts": {
         "build": "webpack",
         "test": "jest",
-        "start": "webpack-dev-server --config testApp/webpack.config.js",
         "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
     },
     "repository": {
