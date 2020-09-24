@@ -1,6 +1,12 @@
 const path = require('path');
 
-module.exports = (env = {}) => {
+module.exports = (env = {}, { mode }) => {
+    jsXLoaders = ['babel-loader'];
+    // Use eslint only during production build
+    if (mode === 'production') {
+        jsXLoaders.push('eslint-loader');
+    }
+
     return ({
         entry: './src/index.js',
         output: {
@@ -13,7 +19,7 @@ module.exports = (env = {}) => {
                 {
                     test: /\.(js|jsx)$/,
                     exclude: /node_modules/,
-                    use: ['babel-loader', 'eslint-loader'],
+                    use: jsXLoaders,
                 },
                 {
                     test: /\.css$/i,
