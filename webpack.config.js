@@ -1,9 +1,7 @@
 const path = require('path');
 
 module.exports = (env = {}) => {
-    const mode = env.production ? 'production' : 'development';
     return ({
-        mode,
         entry: './src/index.js',
         output: {
             path: path.resolve('dist'),
