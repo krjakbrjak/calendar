@@ -1,0 +1,17 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "Calendar Component Demo",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "author": "Nikita Vakula",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "@krjakbrjak/calendar": "file:.."
+  }
+}

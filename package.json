@@ -1,15 +1,20 @@
 {
     "name": "@krjakbrjak/calendar",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Simple calendar widget",
     "main": "dist/main.js",
     "dependencies": {
-        "react": "^16.13.1",
-        "react-dom": "^16.13.1",
-        "normalize.css": "^8.0.1",
+        "normalize.css": "^8.0.1"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.3",
+        "react-dom": ">=16.8.3",
         "prop-types": "^15.7.2"
     },
     "devDependencies": {
+        "react": ">=16.8.3",
+        "react-dom": ">=16.8.3",
+        "prop-types": "^15.7.2",
         "@babel/core": "^7.11.4",
         "@babel/plugin-transform-runtime": "^7.11.0",
         "@babel/preset-env": "^7.11.0",
@@ -41,7 +46,6 @@
     "scripts": {
         "build": "webpack",
         "test": "jest",
-        "start": "webpack-dev-server --config testApp/webpack.config.js",
         "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
     },
     "repository": {
@@ -71,6 +75,5 @@
         "setupFilesAfterEnv": [
             "<rootDir>/src/setupTests.js"
         ]
-    },
-    "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+    }
 }
