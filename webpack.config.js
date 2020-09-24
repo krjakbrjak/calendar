@@ -8,7 +8,7 @@ module.exports = (env = {}) => {
         output: {
             path: path.resolve('dist'),
             filename: 'main.js',
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'umd',
         },
         module: {
             rules: [
