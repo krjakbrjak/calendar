@@ -7,8 +7,8 @@ export default defineConfig({
     plugins: [cssInjectedByJs()],
     oxc: {
         jsx: {
-            // React 16.13 predates react/jsx-runtime, so the classic
-            // React.createElement transform is required.
+            // peerDependencies allows React >=16.8.3, and react/jsx-runtime
+            // only exists from 16.14.
             runtime: 'classic',
         },
     },
@@ -31,12 +31,12 @@ export default defineConfig({
             fileName: (format) => (format === 'umd' ? 'main.js' : 'main.mjs'),
         },
         rollupOptions: {
-            // Supplied by the consumer, same as the previous webpack build.
-            external: ['react', 'react-dom'],
+            external: ['react', 'react-dom', 'prop-types'],
             output: {
                 globals: {
                     react: 'React',
                     'react-dom': 'ReactDOM',
+                    'prop-types': 'PropTypes',
                 },
             },
         },

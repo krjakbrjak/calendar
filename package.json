@@ -10,9 +10,6 @@
             "require": "./dist/main.js"
         }
     },
-    "dependencies": {
-        "normalize.css": "^8.0.1"
-    },
     "peerDependencies": {
         "prop-types": "^15.7.2",
         "react": ">=16.8.3",
