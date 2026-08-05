@@ -1,10 +1,4 @@
-import {
-    getToday,
-    isToday,
-    DateRange,
-    getWeekdays,
-    areDatesEqual,
-} from '../helpers';
+import { getToday, isToday, DateRange, getWeekdays, areDatesEqual } from '../helpers';
 
 describe('Helpers', () => {
     it('getToday', () => {
@@ -21,15 +15,15 @@ describe('Helpers', () => {
     });
 
     it('DateRange', () => {
-        const formatter = new Intl.DateTimeFormat('default', { day: 'numeric', year: 'numeric', month: 'numeric' });
+        const formatter = new Intl.DateTimeFormat('default', {
+            day: 'numeric',
+            year: 'numeric',
+            month: 'numeric',
+        });
 
         expect(Array.from(new DateRange(new Date(1970, 1, 1), 1, 0)).length).toBe(0);
 
-        const reference = [
-            new Date(1970, 1, 2),
-            new Date(1970, 1, 3),
-            new Date(1970, 1, 4),
-        ];
+        const reference = [new Date(1970, 1, 2), new Date(1970, 1, 3), new Date(1970, 1, 4)];
         const days = Array.from(new DateRange(new Date(1970, 1, 1), 1, 3));
 
         expect(days.length).toBe(3);
@@ -50,12 +44,12 @@ describe('Helpers', () => {
             'Saturday',
         ];
 
-        expect(getWeekdays({short: false})).toEqual(weekdays);
+        expect(getWeekdays({ short: false })).toEqual(weekdays);
     });
 
     it('areDatesEqual', () => {
         const today = new Date();
         expect(areDatesEqual(today, new Date())).toBe(true);
         expect(areDatesEqual(today, new Date(1988))).toBe(false);
-    })
+    });
 });

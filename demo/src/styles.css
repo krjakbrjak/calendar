@@ -1,0 +1,82 @@
+:root {
+    /* Read by @krjakbrjak/calendar */
+    --primaryColor: #1c2331;
+    --secondaryColor: #e6ecf7;
+    --accentColor: #cfe0ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem;
+    background: #eef1f6;
+    color: var(--primaryColor);
+    font-family: system-ui, sans-serif;
+}
+
+.app {
+    width: min(30rem, 100%);
+    background: #ffffff;
+    border: 1px solid #dde3ec;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px -12px rgb(0 0 0 / 20%);
+    overflow: hidden;
+}
+
+.app__title {
+    margin: 0;
+    padding: 1.25rem 1.25rem 0;
+    font-size: 0.875rem;
+    color: #6b7688;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+/* The calendar grid has a min-content width of its own. Without these it
+   overflows and paints over the buttons. */
+.nav__calendar {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.nav__button {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid #dde3ec;
+    border-radius: 50%;
+    background: none;
+    color: #6b7688;
+    font: inherit;
+    cursor: pointer;
+}
+
+.nav__button:hover {
+    background: var(--secondaryColor);
+    color: var(--primaryColor);
+}
+
+.readout {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid #dde3ec;
+    font-size: 0.875rem;
+    color: #6b7688;
+}
+
+.readout b {
+    color: var(--primaryColor);
+}

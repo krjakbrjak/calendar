@@ -1,5 +1,12 @@
 .day {
+    display: block;
+    width: 100%;
     padding: 1rem;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
 }
 
 .day:hover {

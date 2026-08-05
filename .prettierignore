@@ -1,0 +1,7 @@
+dist
+demo/dist
+docs
+node_modules
+.yarn
+yarn.lock
+*.md
