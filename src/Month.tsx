@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import Day from './Day';
 import { getWeekdays, areDatesEqual } from './helpers';
@@ -35,23 +35,25 @@ const Month = ({ month, year, selectRange, onDateSelected = () => {} }: MonthPro
         intermediate: null,
     });
 
-    // Call onDateSelected only if selection has changed. Without selectRange
-    // a click is the whole selection, so there is no second date. With it,
-    // selection.intermediate holds the end of the range while hovering, until
-    // a second date is clicked.
-    useEffect(() => {
-        if (!onDateSelected || !selection.first) {
+    // Records the new selection and reports it. Without selectRange a click is
+    // the whole selection, so there is no second date. With it,
+    // intermediate holds the end of the range while hovering, until a second
+    // date is clicked.
+    const applySelection = (next: Selection) => {
+        setSelection(next);
+
+        if (!onDateSelected || !next.first) {
             return;
         }
 
         if (!selectRange) {
-            onDateSelected(selection.first, null);
-        } else if (selection.second) {
-            onDateSelected(selection.first, selection.second);
-        } else if (selection.intermediate) {
-            onDateSelected(selection.first, selection.intermediate);
+            onDateSelected(next.first, null);
+        } else if (next.second) {
+            onDateSelected(next.first, next.second);
+        } else if (next.intermediate) {
+            onDateSelected(next.first, next.intermediate);
         }
-    }, [selection]);
+    };
 
     // Generates a grid for the month
     const generateGrid = (): number[] => {
@@ -108,7 +110,7 @@ const Month = ({ month, year, selectRange, onDateSelected = () => {} }: MonthPro
                             onMouseEnter={() => {
                                 // intermediate is only used to preview a range
                                 if (selectRange) {
-                                    setSelection({
+                                    applySelection({
                                         ...selection,
                                         intermediate: d,
                                     });
@@ -118,32 +120,30 @@ const Month = ({ month, year, selectRange, onDateSelected = () => {} }: MonthPro
                         >
                             <Day
                                 onSelected={(date) => {
-                                    if (selectRange === true) {
-                                        if (selection.first && selection.second) {
-                                            setSelection({
-                                                first: date,
-                                                second: null,
-                                                intermediate: null,
-                                            });
-                                        } else if (
-                                            selection.first &&
-                                            !areDatesEqual(selection.first, date)
-                                        ) {
-                                            setSelection({
-                                                ...selection,
-                                                second: date,
-                                            });
-                                        } else if (!selection.first) {
-                                            setSelection({
-                                                ...selection,
-                                                first: date,
-                                            });
-                                        }
-                                    } else {
-                                        setSelection({
+                                    if (selectRange !== true) {
+                                        applySelection({
                                             first: date,
                                             second: null,
                                             intermediate: null,
+                                        });
+                                    } else if (selection.first && selection.second) {
+                                        applySelection({
+                                            first: date,
+                                            second: null,
+                                            intermediate: null,
+                                        });
+                                    } else if (
+                                        selection.first &&
+                                        !areDatesEqual(selection.first, date)
+                                    ) {
+                                        applySelection({
+                                            ...selection,
+                                            second: date,
+                                        });
+                                    } else if (!selection.first) {
+                                        applySelection({
+                                            ...selection,
+                                            first: date,
                                         });
                                     }
                                 }}
