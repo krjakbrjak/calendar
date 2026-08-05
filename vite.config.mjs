@@ -5,10 +5,23 @@ export default defineConfig({
     // Styles are injected at runtime instead of being emitted as a separate
     // stylesheet, so importing the component is enough to get its CSS.
     plugins: [cssInjectedByJs()],
-    esbuild: {
-        // React 16.13 predates react/jsx-runtime, so the classic
-        // React.createElement transform is required.
-        jsx: 'transform',
+    oxc: {
+        jsx: {
+            // React 16.13 predates react/jsx-runtime, so the classic
+            // React.createElement transform is required.
+            runtime: 'classic',
+        },
+    },
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        setupFiles: ['src/setupTests.js'],
+        css: {
+            modules: {
+                // Keep class names unhashed so tests can assert on them directly.
+                classNameStrategy: 'non-scoped',
+            },
+        },
     },
     build: {
         lib: {

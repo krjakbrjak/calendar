@@ -19,37 +19,31 @@
         "react-dom": ">=16.8.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.11.4",
-        "@babel/plugin-transform-runtime": "^7.11.0",
-        "@babel/preset-env": "^7.11.0",
-        "@babel/preset-react": "^7.10.4",
-        "@babel/runtime": "^7.11.2",
-        "@testing-library/react": "^10.4.8",
+        "@testing-library/jest-dom": "^7.0.0",
+        "@testing-library/react": "^12.1.5",
+        "@testing-library/user-event": "^14.6.3",
         "babel-eslint": "^10.1.0",
         "better-docs": "^2.3.1",
-        "enzyme": "^3.11.0",
-        "enzyme-adapter-react-16": "^1.15.3",
         "eslint": "^7.7.0",
         "eslint-config-airbnb": "^18.2.0",
         "eslint-plugin-import": "^2.22.0",
         "eslint-plugin-jsx-a11y": "^6.3.1",
         "eslint-plugin-react": "^7.20.6",
-        "identity-obj-proxy": "^3.0.0",
-        "jest": "^26.4.2",
-        "jest-enzyme": "^7.1.2",
         "jsdoc": "^3.6.5",
+        "jsdom": "^29.1.1",
         "prop-types": "^15.7.2",
         "react": ">=16.8.3",
         "react-dom": ">=16.8.3",
-        "sinon": "^9.0.3",
         "vite": "^8.2.0",
-        "vite-plugin-css-injected-by-js": "^5.0.2"
+        "vite-plugin-css-injected-by-js": "^5.0.2",
+        "vitest": "^4.1.10"
     },
     "scripts": {
         "build": "vite build",
         "prepare": "npm run build",
         "lint": "eslint src --ext .js,.jsx",
-        "test": "jest",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
     },
     "files": [
@@ -72,18 +66,5 @@
     "bugs": {
         "url": "https://github.com/krjakbrjak/calendar/issues"
     },
-    "homepage": "https://github.com/krjakbrjak/calendar#readme",
-    "jest": {
-        "verbose": true,
-        "testMatch": [
-            "**/__tests__/**/*.[jt]s?(x)"
-        ],
-        "moduleNameMapper": {
-            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-            "\\.(css|less)$": "identity-obj-proxy"
-        },
-        "setupFilesAfterEnv": [
-            "<rootDir>/src/setupTests.js"
-        ]
-    }
+    "homepage": "https://github.com/krjakbrjak/calendar#readme"
 }

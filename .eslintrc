@@ -30,6 +30,9 @@
             "env": {
                 "jest": true
             },
+            "globals": {
+                "vi": false
+            },
             "rules": {
                 "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
             }
