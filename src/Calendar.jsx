@@ -34,9 +34,7 @@ const Calendar = ({
     selectRange = false,
     onDateSelected = () => {},
 }) => {
-    const day = new Date();
-    day.setFullYear(year);
-    day.setMonth(month);
+    const day = new Date(year, month, 1);
     // Formatter for calendar view's title
     const serializer = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' });
 

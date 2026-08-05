@@ -17,6 +17,23 @@ const renderMonth = ({ selectRange = true, onDateSelected } = {}) => render(<Mon
 />);
 
 describe('Month', () => {
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('Grid alignment does not depend on the current date', () => {
+        // April has no 31st, so deriving the grid from today's date would roll
+        // over into May and compute the offset from the wrong weekday
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(2026, 2, 31));
+
+        render(<Month month={3} year={1970} selectRange={false} />);
+
+        // 1 April 1970 was a Wednesday, so the grid starts on 29 March
+        const cells = screen.getAllByRole('button').slice(0, 5).map((b) => b.textContent);
+        expect(cells).toEqual(['29', '30', '31', '1', '2']);
+    });
+
     it('Props', () => {
         renderMonth();
 

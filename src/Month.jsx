@@ -44,10 +44,7 @@ const Month = ({
     selectRange,
     onDateSelected = () => {},
 }) => {
-    const day = new Date();
-    day.setFullYear(year);
-    day.setMonth(month);
-    day.setDate(1);
+    const day = new Date(year, month, 1);
 
     const [selection, setSelection] = useState({
         first: null,
