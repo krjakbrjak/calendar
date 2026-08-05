@@ -4,7 +4,7 @@
  * @author Nikita Vakula <programmistov.programmist@gmail.com>
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { Calendar } from '@krjakbrjak/calendar';

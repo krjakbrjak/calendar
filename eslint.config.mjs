@@ -12,6 +12,7 @@ export default [
     },
     js.configs.recommended,
     react.configs.flat.recommended,
+    react.configs.flat['jsx-runtime'],
     reactHooks.configs.flat.recommended,
     jsxA11y.flatConfigs.recommended,
     importX.flatConfigs.recommended,

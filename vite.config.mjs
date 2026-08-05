@@ -7,9 +7,7 @@ export default defineConfig({
     plugins: [cssInjectedByJs()],
     oxc: {
         jsx: {
-            // peerDependencies allows React >=16.8.3, and react/jsx-runtime
-            // only exists from 16.14.
-            runtime: 'classic',
+            runtime: 'automatic',
         },
     },
     test: {
@@ -26,19 +24,11 @@ export default defineConfig({
     build: {
         lib: {
             entry: 'src/index.js',
-            name: 'Calendar',
-            formats: ['umd', 'es'],
-            fileName: (format) => (format === 'umd' ? 'main.js' : 'main.mjs'),
+            formats: ['es', 'cjs'],
+            fileName: (format) => (format === 'cjs' ? 'main.cjs' : 'main.mjs'),
         },
         rollupOptions: {
-            external: ['react', 'react-dom', 'prop-types'],
-            output: {
-                globals: {
-                    react: 'React',
-                    'react-dom': 'ReactDOM',
-                    'prop-types': 'PropTypes',
-                },
-            },
+            external: (id) => /^(react|react-dom|prop-types)(\/|$)/.test(id),
         },
     },
 });
