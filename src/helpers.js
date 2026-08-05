@@ -12,7 +12,7 @@
  * Returns today's date.
  *
  * @function helpers.getToday
- * @return {helpers.date} true if a date is today, false otherwise.
+ * @return {helpers.date} Today's date.
  */
 const getToday = () => {
     const today = new Date();

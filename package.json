@@ -44,9 +44,17 @@
         "webpack-dev-server": "^3.11.0"
     },
     "scripts": {
-        "build": "webpack",
+        "build": "NODE_OPTIONS=--openssl-legacy-provider webpack",
+        "build:prod": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production",
+        "prepare": "npm run build:prod",
         "test": "jest",
         "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
+    },
+    "files": [
+        "dist"
+    ],
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
     },
     "repository": {
         "type": "git",

@@ -15,11 +15,11 @@ import css from './Calendar.css';
  * @description Props for {@link Calendar} component.
  *
  * @typedef {Object} Calendar.Props
- * @property {Integer} [year=Current year] An year
- * @property {Integer} [month=Current month] A month offset from the start of the year.
+ * @property {Integer} year A year.
+ * @property {Integer} month A month offset from the start of the year.
  * @property {Boolean} [selectRange=false] An option to select either
  * a single date or a rnage of dates.
- * @property {Calendar.onDateSelected} [onDateSelected=null] A callback that is executed when
+ * @property {Calendar.onDateSelected} [onDateSelected] A callback that is executed when
  * {@link Day} component ({@link Month}'s child) is clicked.
  */
 /**

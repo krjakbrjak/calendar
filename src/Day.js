@@ -18,7 +18,7 @@ import css from './Day.css';
  * @property {Integer} [year=Current year] An year
  * @property {Integer} [month=Current month] A month offset from the start of the year.
  * @property {Integer} [date=Current date] A day offset from the start of the year.
- * @property {Day.onSelected} [onSelected=null] A callback that is executed when component
+ * @property {Day.onSelected} [onSelected] A callback that is executed when component
  * is clicked.
  */
 /**

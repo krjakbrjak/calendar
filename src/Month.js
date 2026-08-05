@@ -23,10 +23,10 @@ const NUMBER_OF_WEEKS = 6;
  * @description Props for {@link Month} component.
  *
  * @typedef {Object} Month.Props
- * @property {Integer} [year=Current year] An year
- * @property {Integer} [month=Current month] A month offset from the start of the year.
+ * @property {Integer} year A year.
+ * @property {Integer} month A month offset from the start of the year.
  * @property {Boolean} selectRange An option to select either a single date or a rnage of dates.
- * @property {Month.onDateSelected} [onDateSelected=null] A callback that is executed when
+ * @property {Month.onDateSelected} [onDateSelected] A callback that is executed when
  * {@link Day} component ({@link Month}'s child) is clicked.
  */
 /**
