@@ -13,7 +13,7 @@
     "vite": "^8.2.0"
   },
   "dependencies": {
-    "@krjakbrjak/calendar": "file:..",
+    "@krjakbrjak/calendar": "portal:..",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   }

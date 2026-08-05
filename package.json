@@ -19,18 +19,21 @@
         "react-dom": ">=16.8.3"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@stylistic/eslint-plugin": "^5.10.0",
         "@testing-library/dom": "^10.4.1",
         "@testing-library/jest-dom": "^7.0.0",
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.3",
-        "eslint": "^7.7.0",
-        "eslint-config-airbnb": "^18.2.0",
-        "eslint-plugin-import": "^2.22.0",
-        "eslint-plugin-jsx-a11y": "^6.3.1",
-        "eslint-plugin-react": "^7.20.6",
+        "eslint": "^10.8.0",
+        "eslint-plugin-import-x": "^4.17.1",
+        "eslint-plugin-jsx-a11y": "^6.10.2",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "globals": "^17.9.0",
         "jsdoc": "^4.0.5",
-        "jsdom": "^29.1.1",
-        "prop-types": "^15.7.2",
+        "jsdom": "^30",
+        "prop-types": "^15.8.1",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
         "vite": "^8.2.0",
@@ -39,8 +42,8 @@
     },
     "scripts": {
         "build": "vite build",
-        "prepare": "npm run build",
-        "lint": "eslint src --ext .js,.jsx",
+        "prepack": "vite build",
+        "lint": "eslint src",
         "test": "vitest run",
         "test:watch": "vitest",
         "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
@@ -65,5 +68,6 @@
     "bugs": {
         "url": "https://github.com/krjakbrjak/calendar/issues"
     },
-    "homepage": "https://github.com/krjakbrjak/calendar#readme"
+    "homepage": "https://github.com/krjakbrjak/calendar#readme",
+    "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e"
 }
