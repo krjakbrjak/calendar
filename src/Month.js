@@ -55,16 +55,21 @@ const Month = ({
         intermediate: null,
     });
 
-    // Call onDateSelected only if selection has changed and
-    // if selection.first is selected and either selection.first
-    // or selection.intermediate is selected.
+    // Call onDateSelected only if selection has changed. Without selectRange
+    // a click is the whole selection, so there is no second date. With it,
+    // selection.intermediate holds the end of the range while hovering, until
+    // a second date is clicked.
     useEffect(() => {
-        if (onDateSelected) {
-            if (selection.first && selection.second) {
-                onDateSelected(selection.first, selection.second);
-            } else if (selection.first && selection.intermediate) {
-                onDateSelected(selection.first, selection.intermediate);
-            }
+        if (!onDateSelected || !selection.first) {
+            return;
+        }
+
+        if (!selectRange) {
+            onDateSelected(selection.first, null);
+        } else if (selection.second) {
+            onDateSelected(selection.first, selection.second);
+        } else if (selection.intermediate) {
+            onDateSelected(selection.first, selection.intermediate);
         }
     }, [selection]);
 
@@ -115,10 +120,15 @@ const Month = ({
                     return (
                         <div
                             key={d}
-                            onMouseEnter={() => setSelection({
-                                ...selection,
-                                intermediate: d,
-                            })}
+                            onMouseEnter={() => {
+                                // intermediate is only used to preview a range
+                                if (selectRange) {
+                                    setSelection({
+                                        ...selection,
+                                        intermediate: d,
+                                    });
+                                }
+                            }}
                             className={getClassName(d)}
                         >
                             <Day

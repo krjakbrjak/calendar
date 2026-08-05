@@ -85,4 +85,37 @@ describe('Month', () => {
             expect(found.at(i).hasClass('selection')).toBe(true);
         }
     });
+
+    it('Single selection', () => {
+        // Thursday, 1 January 1970
+        const timestamp = new Date(0);
+        const onDateSelected = sinon.spy();
+        let wrapper;
+
+        act(() => {
+            wrapper = mount(<Month
+                month={timestamp.getMonth()}
+                year={timestamp.getFullYear()}
+                selectRange={false}
+                onDateSelected={onDateSelected}
+            />);
+        });
+
+        act(() => {
+            wrapper.find('.dayContainer .day').at(7).simulate('click');
+        });
+
+        // The click itself is the whole selection: it reports once, with no second date
+        expect(onDateSelected.callCount).toBe(1);
+        expect(onDateSelected.lastCall.args[0].toDateString())
+            .toBe(new Date(1970, 0, 4).toDateString());
+        expect(onDateSelected.lastCall.args[1]).toBe(null);
+
+        // Hovering must not report a range when a range cannot be selected
+        act(() => {
+            wrapper.find('.dayContainer').at(20).simulate('mouseenter');
+        });
+
+        expect(onDateSelected.callCount).toBe(1);
+    });
 });
