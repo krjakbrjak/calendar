@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import Month from '../Month';
+import type { MonthProps } from '../Month';
 
 // Thursday, 1 January 1970
 const timestamp = new Date(0);
@@ -8,12 +9,23 @@ const timestamp = new Date(0);
 // fireEvent is used instead of userEvent here: these tests assert exactly which
 // events reach the component, and userEvent.click also fires pointer/hover
 // events that would themselves drive the range preview.
-const renderMonth = ({ selectRange = true, onDateSelected } = {}) => render(<Month
-    month={timestamp.getMonth()}
-    year={timestamp.getFullYear()}
-    selectRange={selectRange}
-    onDateSelected={onDateSelected}
-/>);
+const renderMonth = ({ selectRange = true, onDateSelected }: Partial<MonthProps> = {}) =>
+    render(
+        <Month
+            month={timestamp.getMonth()}
+            year={timestamp.getFullYear()}
+            selectRange={selectRange}
+            onDateSelected={onDateSelected}
+        />,
+    );
+
+const containerOf = (day: HTMLElement): HTMLElement => {
+    const { parentElement } = day;
+    if (!parentElement) {
+        throw new Error('day cell has no container');
+    }
+    return parentElement;
+};
 
 describe('Month', () => {
     afterEach(() => {
@@ -29,7 +41,10 @@ describe('Month', () => {
         render(<Month month={3} year={1970} selectRange={false} />);
 
         // 1 April 1970 was a Wednesday, so the grid starts on 29 March
-        const cells = screen.getAllByRole('button').slice(0, 5).map((b) => b.textContent);
+        const cells = screen
+            .getAllByRole('button')
+            .slice(0, 5)
+            .map((b) => b.textContent);
         expect(cells).toEqual(['29', '30', '31', '1', '2']);
     });
 
@@ -63,16 +78,14 @@ describe('Month', () => {
         fireEvent.click(days[first]);
         fireEvent.click(days[last]);
 
-        const selected = days
-            .map((day) => day.parentElement)
-            .filter((container) => container.classList.contains('selection'));
+        const selected = days.filter((day) => containerOf(day).classList.contains('selection'));
 
         // the number of nodes should equal `last - first + 1` because the selection
         // is inclusive
         expect(selected).toHaveLength(last - first + 1);
 
         for (let i = first; i < last + 1; i += 1) {
-            expect(days[i].parentElement).toHaveClass('selection');
+            expect(containerOf(days[i])).toHaveClass('selection');
         }
     });
 
@@ -86,12 +99,13 @@ describe('Month', () => {
 
         // The click itself is the whole selection: it reports once, with no second date
         expect(onDateSelected).toHaveBeenCalledTimes(1);
-        expect(onDateSelected.mock.calls[0][0].toDateString())
-            .toBe(new Date(1970, 0, 4).toDateString());
+        expect(onDateSelected.mock.calls[0][0].toDateString()).toBe(
+            new Date(1970, 0, 4).toDateString(),
+        );
         expect(onDateSelected.mock.calls[0][1]).toBe(null);
 
         // Hovering must not report a range when a range cannot be selected
-        fireEvent.mouseEnter(days[20].parentElement);
+        fireEvent.mouseEnter(containerOf(days[20]));
 
         expect(onDateSelected).toHaveBeenCalledTimes(1);
     });

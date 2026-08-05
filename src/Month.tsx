@@ -1,52 +1,35 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 
 import Day from './Day';
-import {
-    getWeekdays,
-    areDatesEqual,
-} from './helpers';
+import { getWeekdays, areDatesEqual } from './helpers';
 
 import css from './Month.module.css';
 
 const DAYS_IN_WEEK = 7;
 const NUMBER_OF_WEEKS = 6;
 
-/**
- * @callback Month.onDateSelected
- * @param {Date} first A date.
- * @param {Date} [second=null] A date (if the range is selected).
- * @returns void
- */
+interface Selection {
+    first: Date | null;
+    second: Date | null;
+    intermediate: Date | null;
+}
+
+export interface MonthProps {
+    year: number;
+    /** Month offset from the start of the year, 0-11. */
+    month: number;
+    selectRange: boolean;
+    onDateSelected?: (first: Date, second: Date | null) => void;
+}
 
 /**
- * @description Props for {@link Month} component.
- *
- * @typedef {Object} Month.Props
- * @property {Integer} year A year.
- * @property {Integer} month A month offset from the start of the year.
- * @property {Boolean} selectRange An option to select either a single date or a rnage of dates.
- * @property {Month.onDateSelected} [onDateSelected] A callback that is executed when
- * {@link Day} component ({@link Month}'s child) is clicked.
+ * Displays the days of a month, plus the surrounding days of the adjacent
+ * months, in a grid. The grid itself is defined in CSS.
  */
-/**
- * @description Month component.
- *
- * A very simple component displaying days of the month
- * (and days of prev/next month if needed) in a grid. The
- * grid is defined in CSS (display: grid).
- * @param {Month.Props} props Properties
- * @component
- */
-const Month = ({
-    month,
-    year,
-    selectRange,
-    onDateSelected = () => {},
-}) => {
+const Month = ({ month, year, selectRange, onDateSelected = () => {} }: MonthProps) => {
     const day = new Date(year, month, 1);
 
-    const [selection, setSelection] = useState({
+    const [selection, setSelection] = useState<Selection>({
         first: null,
         second: null,
         intermediate: null,
@@ -71,8 +54,8 @@ const Month = ({
     }, [selection]);
 
     // Generates a grid for the month
-    const generateGrid = () => {
-        const res = [];
+    const generateGrid = (): number[] => {
+        const res: number[] = [];
         // The offset for the grid: if the first day of the month is
         // Sunday (day.getDay() === 0) then the offset is 1. Otherwise,
         // it has to be the last Sunday before the first day of the
@@ -84,22 +67,25 @@ const Month = ({
         return res;
     };
 
-    // Determines if the valus is within the
-    // selected range.
-    const isSelection = (value) => {
+    // Determines if the value is within the selected range.
+    const isSelection = (value: Date): boolean => {
         if (selectRange && selection.first) {
             if (selection.second) {
                 return value >= selection.first && value <= selection.second;
             }
 
-            return value >= selection.first && value <= selection.intermediate;
+            return (
+                selection.intermediate !== null &&
+                value >= selection.first &&
+                value <= selection.intermediate
+            );
         }
 
         return false;
     };
 
     // Calculates the class for day's div container
-    const getClassName = (value) => {
+    const getClassName = (value: Date): string => {
         let className = 'dayContainer';
         if (isSelection(value)) {
             className = `${className} ${css.selection}`;
@@ -111,12 +97,14 @@ const Month = ({
     return (
         <div className={css.month}>
             <div className={css.monthGrid}>
-                {getWeekdays().map((el) => <div key={el}>{el}</div>)}
+                {getWeekdays().map((el) => (
+                    <div key={el}>{el}</div>
+                ))}
                 {generateGrid().map((el) => {
                     const d = new Date(year, month, el);
                     return (
                         <div
-                            key={d}
+                            key={el}
                             onMouseEnter={() => {
                                 // intermediate is only used to preview a range
                                 if (selectRange) {
@@ -135,9 +123,12 @@ const Month = ({
                                             setSelection({
                                                 first: date,
                                                 second: null,
+                                                intermediate: null,
                                             });
-                                        } else if (selection.first
-                                            && !areDatesEqual(selection.first, date)) {
+                                        } else if (
+                                            selection.first &&
+                                            !areDatesEqual(selection.first, date)
+                                        ) {
                                             setSelection({
                                                 ...selection,
                                                 second: date,
@@ -152,6 +143,7 @@ const Month = ({
                                         setSelection({
                                             first: date,
                                             second: null,
+                                            intermediate: null,
                                         });
                                     }
                                 }}
@@ -166,13 +158,6 @@ const Month = ({
             </div>
         </div>
     );
-};
-
-Month.propTypes = {
-    year: PropTypes.number.isRequired,
-    month: PropTypes.number.isRequired,
-    selectRange: PropTypes.bool.isRequired,
-    onDateSelected: PropTypes.func,
 };
 
 export default Month;

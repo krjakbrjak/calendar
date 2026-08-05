@@ -1,16 +1,20 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import Calendar from '../Calendar';
+import type { CalendarProps } from '../Calendar';
 
 // Thursday, 1 January 1970
 const timestamp = new Date(0);
 
-const renderCalendar = ({ selectRange = false, onDateSelected } = {}) => render(<Calendar
-    month={timestamp.getMonth()}
-    year={timestamp.getFullYear()}
-    selectRange={selectRange}
-    onDateSelected={onDateSelected}
-/>);
+const renderCalendar = ({ selectRange = false, onDateSelected }: Partial<CalendarProps> = {}) =>
+    render(
+        <Calendar
+            month={timestamp.getMonth()}
+            year={timestamp.getFullYear()}
+            selectRange={selectRange}
+            onDateSelected={onDateSelected}
+        />,
+    );
 
 describe('Calendar', () => {
     afterEach(() => {
@@ -20,8 +24,9 @@ describe('Calendar', () => {
     it('Title', () => {
         renderCalendar();
 
-        const title = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' })
-            .format(new Date(1970, 0, 1));
+        const title = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' }).format(
+            new Date(1970, 0, 1),
+        );
 
         expect(screen.getByText(title)).toBeInTheDocument();
     });
@@ -39,8 +44,9 @@ describe('Calendar', () => {
         fireEvent.click(screen.getAllByRole('button')[7]);
 
         expect(onDateSelected).toHaveBeenCalledTimes(1);
-        expect(onDateSelected.mock.calls[0][0].toDateString())
-            .toBe(new Date(1970, 0, 4).toDateString());
+        expect(onDateSelected.mock.calls[0][0].toDateString()).toBe(
+            new Date(1970, 0, 4).toDateString(),
+        );
         expect(onDateSelected.mock.calls[0][1]).toBe(null);
     });
 
@@ -52,8 +58,9 @@ describe('Calendar', () => {
 
         render(<Calendar month={1} year={1970} />);
 
-        const title = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' })
-            .format(new Date(1970, 1, 1));
+        const title = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' }).format(
+            new Date(1970, 1, 1),
+        );
 
         expect(screen.getByText(title)).toBeInTheDocument();
     });
@@ -67,7 +74,7 @@ describe('Calendar', () => {
         fireEvent.click(days[15]);
 
         expect(days[10].parentElement).toHaveClass('selection');
-        expect(onDateSelected.mock.calls.at(-1)[1].toDateString())
-            .toBe(new Date(1970, 0, 12).toDateString());
+        const lastCall = onDateSelected.mock.calls.at(-1);
+        expect(lastCall?.[1].toDateString()).toBe(new Date(1970, 0, 12).toDateString());
     });
 });

@@ -6,44 +6,41 @@
     "module": "dist/main.mjs",
     "exports": {
         ".": {
+            "types": "./dist/index.d.ts",
             "import": "./dist/main.mjs",
             "require": "./dist/main.cjs"
         }
     },
     "peerDependencies": {
-        "prop-types": "^15.7.2",
         "react": "^18.0.0 || ^19.0.0",
         "react-dom": "^18.0.0 || ^19.0.0"
     },
     "devDependencies": {
-        "@eslint/js": "^10.0.1",
-        "@stylistic/eslint-plugin": "^5.10.0",
         "@testing-library/dom": "^10.4.1",
         "@testing-library/jest-dom": "^7.0.0",
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.3",
-        "eslint": "^10.8.0",
-        "eslint-plugin-import-x": "^4.17.1",
-        "eslint-plugin-jsx-a11y": "^6.10.2",
-        "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^7.1.1",
-        "globals": "^17.9.0",
-        "jsdoc": "^4.0.5",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
         "jsdom": "^30",
-        "prop-types": "^15.8.1",
+        "oxlint": "^1.77.0",
+        "prettier": "^3.9.6",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
+        "typescript": "^7.0.2",
         "vite": "^8.2.0",
         "vite-plugin-css-injected-by-js": "^5.0.2",
         "vitest": "^4.1.10"
     },
     "scripts": {
-        "build": "vite build",
-        "prepack": "vite build",
-        "lint": "eslint src",
+        "build": "vite build && tsc -p tsconfig.build.json",
+        "prepack": "yarn build",
+        "lint": "oxlint src",
         "test": "vitest run",
         "test:watch": "vitest",
-        "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
+        "typecheck": "tsc --noEmit",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "files": [
         "dist"
@@ -66,5 +63,6 @@
         "url": "https://github.com/krjakbrjak/calendar/issues"
     },
     "homepage": "https://github.com/krjakbrjak/calendar#readme",
-    "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e"
+    "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e",
+    "types": "dist/index.d.ts"
 }
