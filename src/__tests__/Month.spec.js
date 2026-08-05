@@ -8,7 +8,6 @@ import Month from '../Month';
 import Day from '../Day';
 
 describe('Month', () => {
-
     beforeEach(() => {
     });
 

@@ -23,5 +23,16 @@
         "fetch": false,
         "document": false,
         "XMLHttpRequest": false
-    }
+    },
+    "overrides": [
+        {
+            "files": ["src/**/__tests__/**", "src/setupTests.js"],
+            "env": {
+                "jest": true
+            },
+            "rules": {
+                "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+            }
+        }
+    ]
 }

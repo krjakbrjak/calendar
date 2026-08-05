@@ -7,7 +7,6 @@ import sinon from 'sinon';
 import Day from '../Day';
 
 describe('Day', () => {
-
     function getDiv(wrapper) {
         if (wrapper) {
             return wrapper.find('.day');

@@ -50,12 +50,12 @@ describe('Helpers', () => {
             'Saturday',
         ];
 
-        expect(getWeekdays({short: false})).toEqual(weekdays);
+        expect(getWeekdays({ short: false })).toEqual(weekdays);
     });
 
     it('areDatesEqual', () => {
         const today = new Date();
         expect(areDatesEqual(today, new Date())).toBe(true);
         expect(areDatesEqual(today, new Date(1988))).toBe(false);
-    })
+    });
 });

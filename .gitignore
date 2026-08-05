@@ -1,4 +1,5 @@
-dist/main.js
+dist/
+demo/dist/
 
 # Vim swap files
 *.sw[o,p]

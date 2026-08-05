@@ -7,7 +7,7 @@ import {
     areDatesEqual,
 } from './helpers';
 
-import css from './Month.css';
+import css from './Month.module.css';
 
 const DAYS_IN_WEEK = 7;
 const NUMBER_OF_WEEKS = 6;

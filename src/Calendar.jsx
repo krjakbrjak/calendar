@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Month from './Month';
-import css from './Calendar.css';
+import css from './Calendar.module.css';
 
 /**
  * @callback Calendar.onDateSelected

@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 
 import { getToday, isToday } from './helpers';
 
-import css from './Day.css';
+import css from './Day.module.css';
 
 /**
  * @callback Day.onSelected

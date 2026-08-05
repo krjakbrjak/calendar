@@ -3,18 +3,22 @@
     "version": "0.0.3",
     "description": "Simple calendar widget",
     "main": "dist/main.js",
+    "module": "dist/main.mjs",
+    "exports": {
+        ".": {
+            "import": "./dist/main.mjs",
+            "require": "./dist/main.js"
+        }
+    },
     "dependencies": {
         "normalize.css": "^8.0.1"
     },
     "peerDependencies": {
+        "prop-types": "^15.7.2",
         "react": ">=16.8.3",
-        "react-dom": ">=16.8.3",
-        "prop-types": "^15.7.2"
+        "react-dom": ">=16.8.3"
     },
     "devDependencies": {
-        "react": ">=16.8.3",
-        "react-dom": ">=16.8.3",
-        "prop-types": "^15.7.2",
         "@babel/core": "^7.11.4",
         "@babel/plugin-transform-runtime": "^7.11.0",
         "@babel/preset-env": "^7.11.0",
@@ -22,14 +26,11 @@
         "@babel/runtime": "^7.11.2",
         "@testing-library/react": "^10.4.8",
         "babel-eslint": "^10.1.0",
-        "babel-loader": "^8.1.0",
         "better-docs": "^2.3.1",
-        "css-loader": "^4.2.1",
         "enzyme": "^3.11.0",
         "enzyme-adapter-react-16": "^1.15.3",
         "eslint": "^7.7.0",
         "eslint-config-airbnb": "^18.2.0",
-        "eslint-loader": "^4.0.2",
         "eslint-plugin-import": "^2.22.0",
         "eslint-plugin-jsx-a11y": "^6.3.1",
         "eslint-plugin-react": "^7.20.6",
@@ -37,16 +38,17 @@
         "jest": "^26.4.2",
         "jest-enzyme": "^7.1.2",
         "jsdoc": "^3.6.5",
+        "prop-types": "^15.7.2",
+        "react": ">=16.8.3",
+        "react-dom": ">=16.8.3",
         "sinon": "^9.0.3",
-        "style-loader": "^1.2.1",
-        "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12",
-        "webpack-dev-server": "^3.11.0"
+        "vite": "^8.2.0",
+        "vite-plugin-css-injected-by-js": "^5.0.2"
     },
     "scripts": {
-        "build": "NODE_OPTIONS=--openssl-legacy-provider webpack",
-        "build:prod": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production",
-        "prepare": "npm run build:prod",
+        "build": "vite build",
+        "prepare": "npm run build",
+        "lint": "eslint src --ext .js,.jsx",
         "test": "jest",
         "jsdoc:gen": "jsdoc -c jsdoc.conf.json"
     },
