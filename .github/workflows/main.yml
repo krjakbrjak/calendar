@@ -28,3 +28,82 @@ jobs:
             - run: yarn build
             - run: yarn test
             - run: yarn typecheck
+
+    release-check:
+        runs-on: ubuntu-latest
+
+        outputs:
+            publish: ${{ steps.check.outputs.publish }}
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - id: check
+              env:
+                  BEFORE: ${{ github.event.before }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  head=$(jq -r .version package.json)
+                  echo "publish=false" >> "$GITHUB_OUTPUT"
+
+                  if [ -n "$GITHUB_BASE_REF" ]; then
+                    before="origin/$GITHUB_BASE_REF"
+                  elif git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+                    before="$BEFORE"
+                  else
+                    echo "no commit to compare against, nothing to check"; exit 0
+                  fi
+
+                  base=$(git show "$before:package.json" | jq -r .version)
+                  shipped=$(git diff --name-only "$before" -- src vite.config.mjs tsconfig.build.json)
+
+                  if [ "$base" = "$head" ]; then
+                    if [ -n "$shipped" ]; then
+                      echo "published code changed but the version is still $head, bump it"; exit 1
+                    fi
+                    echo "version stays at $head, this will not publish"; exit 0
+                  fi
+
+                  if [ "$(printf '%s\n%s\n' "$base" "$head" | sort -V | tail -1)" != "$head" ]; then
+                    echo "version went down, from $base to $head"; exit 1
+                  fi
+
+                  # The registry itself is the record of what is published.
+                  name=$(jq -r .name package.json)
+                  status=$(curl -sS -o /tmp/versions.json -w '%{http_code}' \
+                    -H "Authorization: Bearer $GH_TOKEN" \
+                    "https://npm.pkg.github.com/${name/\//%2F}")
+
+                  if [ "$status" = "200" ] && jq -e --arg v "$head" '.versions | has($v)' /tmp/versions.json >/dev/null; then
+                    if [ -n "$GITHUB_BASE_REF" ]; then
+                      echo "$head is already published, pick a higher version"; exit 1
+                    fi
+                    echo "$head is already published, nothing to do"; exit 0
+                  elif [ "$status" != "200" ] && [ "$status" != "404" ]; then
+                    echo "registry answered HTTP $status"; exit 1
+                  fi
+
+                  echo "publish=true" >> "$GITHUB_OUTPUT"
+                  echo "this will publish v$head"
+
+    publish:
+        if: github.event_name == 'push' && needs.release-check.outputs.publish == 'true'
+        needs: [build, release-check]
+        runs-on: ubuntu-latest
+
+        permissions:
+            packages: write
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 26.x
+            - run: npm install -g corepack@latest
+            - run: corepack enable
+            - run: yarn install --immutable
+            - run: yarn npm publish
+              env:
+                  YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
