@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { Calendar } from '@krjakbrjak/calendar';
 
@@ -44,7 +44,4 @@ const App = () => {
     );
 };
 
-ReactDOM.render(
-    <App />,
-    document.getElementById('root'),
-);
+createRoot(document.getElementById('root')).render(<App />);

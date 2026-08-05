@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@krjakbrjak/calendar": "file:..",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   }
 }

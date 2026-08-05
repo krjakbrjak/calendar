@@ -33,7 +33,10 @@ import css from './Day.module.css';
  * @component
  */
 const Day = ({
-    year, month, date, onSelected,
+    year = getToday().year,
+    month = getToday().month,
+    date = getToday().date,
+    onSelected = () => {},
 }) => {
     const tmp = new Date(year, month, date);
 
@@ -70,11 +73,6 @@ Day.propTypes = {
     month: PropTypes.number,
     date: PropTypes.number,
     onSelected: PropTypes.func,
-};
-
-Day.defaultProps = {
-    ...getToday(),
-    onSelected: () => {},
 };
 
 export default Day;

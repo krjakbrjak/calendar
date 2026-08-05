@@ -42,7 +42,7 @@ const Month = ({
     month,
     year,
     selectRange,
-    onDateSelected,
+    onDateSelected = () => {},
 }) => {
     const day = new Date();
     day.setFullYear(year);
@@ -176,10 +176,6 @@ Month.propTypes = {
     month: PropTypes.number.isRequired,
     selectRange: PropTypes.bool.isRequired,
     onDateSelected: PropTypes.func,
-};
-
-Month.defaultProps = {
-    onDateSelected: () => {},
 };
 
 export default Month;

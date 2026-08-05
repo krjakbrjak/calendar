@@ -31,8 +31,8 @@ import css from './Calendar.module.css';
 const Calendar = ({
     month,
     year,
-    selectRange,
-    onDateSelected,
+    selectRange = false,
+    onDateSelected = () => {},
 }) => {
     const day = new Date();
     day.setFullYear(year);
@@ -60,11 +60,6 @@ Calendar.propTypes = {
     month: PropTypes.number.isRequired,
     selectRange: PropTypes.bool,
     onDateSelected: PropTypes.func,
-};
-
-Calendar.defaultProps = {
-    selectRange: false,
-    onDateSelected: () => {},
 };
 
 export default Calendar;
