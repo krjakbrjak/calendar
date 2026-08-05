@@ -41,4 +41,21 @@ describe('Day', () => {
 
         expect(onSelected).toHaveBeenCalledTimes(3);
     });
+
+    it('Keyboard activation', async () => {
+        const user = userEvent.setup();
+        const onSelected = vi.fn();
+
+        render(<Day onSelected={onSelected} />);
+
+        // Tab reaches the day without an explicit tabIndex
+        await user.tab();
+        expect(screen.getByRole('button')).toHaveFocus();
+
+        await user.keyboard('{Enter}');
+        expect(onSelected).toHaveBeenCalledTimes(1);
+
+        await user.keyboard(' ');
+        expect(onSelected).toHaveBeenCalledTimes(2);
+    });
 });

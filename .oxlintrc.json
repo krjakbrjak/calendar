@@ -14,8 +14,7 @@
         "react/no-object-type-as-default-prop": "off",
         "react-hooks/exhaustive-deps": "warn",
         "vitest/require-mock-type-parameters": "off",
-        "import/no-unassigned-import": "off",
-        "jsx-a11y/prefer-tag-over-role": "off"
+        "import/no-unassigned-import": "off"
     },
     "overrides": [
         {

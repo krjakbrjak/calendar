@@ -39,15 +39,9 @@ const Day = ({
     }
 
     return (
-        <div
-            onClick={() => onSelected(tmp)}
-            onKeyDown={() => {}}
-            role="button"
-            className={className}
-            tabIndex={date}
-        >
+        <button type="button" onClick={() => onSelected(tmp)} className={className}>
             {tmp.getDate()}
-        </div>
+        </button>
     );
 };
 
