@@ -4,7 +4,7 @@
 
 A React component that displays a month grid. It can select a single date or a range.
 
-<img src="https://raw.githubusercontent.com/krjakbrjak/calendar/master/calendar_demo.gif" width="400" height="400" />
+<img src="calendar_demo.png" width="500" />
 
 ## Install
 
