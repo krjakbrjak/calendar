@@ -1,6 +1,6 @@
 {
     "name": "@krjakbrjak/calendar",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "description": "Simple calendar widget",
     "main": "dist/main.cjs",
     "module": "dist/main.mjs",
