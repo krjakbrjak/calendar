@@ -24,13 +24,15 @@
         "@types/react-dom": "^19.2.4",
         "jsdom": "^30",
         "oxlint": "^1.77.0",
+        "playwright-core": "^1.62.1",
         "prettier": "^3.9.6",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
         "typescript": "^7.0.2",
         "vite": "^8.2.0",
         "vite-plugin-css-injected-by-js": "^5.0.2",
-        "vitest": "^4.1.10"
+        "vitest": "^4.1.10",
+        "yargs": "^18.1.0"
     },
     "scripts": {
         "build": "vite build && tsc -p tsconfig.build.json",
@@ -40,7 +42,8 @@
         "test:watch": "vitest",
         "typecheck": "tsc --noEmit",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "record:demo": "node scripts/record-demo.mjs --frames .frames --url http://localhost:9001 && ffmpeg -y -framerate 15 -i .frames/%04d.png -vf scale=620:-1:flags=lanczos -plays 0 -f apng calendar_demo.png"
     },
     "files": [
         "dist"
