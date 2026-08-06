@@ -160,6 +160,60 @@ const connect = async (wsUrl) => {
     return { send, once, close: () => socket.close() };
 };
 
+// Runs before any page script: pins the clock so the recording always shows the
+// same month, and adds a synthetic pointer, since CDP input events move no
+// visible cursor.
+const preamble = `
+(() => {
+    const BASE = ${NOW};
+    const RealDate = Date;
+    class PinnedDate extends RealDate {
+        constructor(...args) {
+            if (args.length === 0) {
+                super(BASE);
+            } else {
+                super(...args);
+            }
+        }
+        static now() {
+            return BASE;
+        }
+    }
+    globalThis.Date = PinnedDate;
+
+    const draw = () => {
+        const cursor = document.createElement('div');
+        cursor.style.cssText = [
+            'position:fixed',
+            'z-index:9999',
+            'width:18px',
+            'height:18px',
+            'margin:-9px 0 0 -9px',
+            'border-radius:50%',
+            'background:rgba(28,35,49,.28)',
+            'border:2px solid rgba(28,35,49,.65)',
+            'pointer-events:none',
+        ].join(';');
+        document.body.appendChild(cursor);
+
+        globalThis.__cursor = (x, y) => {
+            cursor.style.left = x + 'px';
+            cursor.style.top = y + 'px';
+            cursor.style.opacity = '1';
+        };
+        globalThis.__press = (down) => {
+            cursor.style.transform = down ? 'scale(.75)' : 'scale(1)';
+        };
+    };
+
+    if (document.body) {
+        draw();
+    } else {
+        document.addEventListener('DOMContentLoaded', draw);
+    }
+})();
+`;
+
 const run = async () => {
     try {
         await fetch(DEMO_URL);
@@ -188,6 +242,7 @@ const run = async () => {
             deviceScaleFactor: SCALE,
             mobile: false,
         });
+        await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: preamble });
 
         const loaded = cdp.once('Page.loadEventFired');
         await cdp.send('Page.navigate', { url: DEMO_URL });
@@ -229,6 +284,7 @@ const run = async () => {
 
         const moveTo = async (x, y) => {
             await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y });
+            await evaluate(`__cursor(${x}, ${y})`);
         };
 
         const glide = async (from, to, steps) => {
@@ -245,8 +301,10 @@ const run = async () => {
         const click = async ({ x, y }) => {
             const button = { button: 'left', clickCount: 1, x, y };
             await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...button });
+            await evaluate('__press(true)');
             await capture(2);
             await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...button });
+            await evaluate('__press(false)');
             await capture(2);
         };
 
