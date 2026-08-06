@@ -1,8 +1,7 @@
-import { spawn } from 'node:child_process';
-import { mkdtemp, mkdir, readdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdir, readdir, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { chromium } from 'playwright-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
@@ -10,9 +9,9 @@ const argv = yargs(hideBin(process.argv))
     .scriptName('record-demo')
     .usage(
         '$0 --frames <dir> --url <url> --chrome <path>\n\n' +
-            'Drives a headless Chrome over the DevTools Protocol and writes one\n' +
-            'PNG per animation step into --frames, numbered for ffmpeg. The clock\n' +
-            'is pinned so the recording is reproducible.\n\n' +
+            'Drives a headless Chrome with Playwright and writes one PNG per\n' +
+            'animation step into --frames, numbered for ffmpeg. The clock is\n' +
+            'pinned so the recording is reproducible.\n\n' +
             'The app must already be served at --url. Encode the frames with e.g.\n' +
             '  ffmpeg -framerate 15 -i <dir>/%04d.png -plays 0 -f apng out.png',
     )
@@ -52,154 +51,27 @@ const HEIGHT = 600;
 const SCALE = 2;
 
 // Pinned so the recording always shows the same month.
-const NOW = Date.UTC(2026, 5, 15, 12, 0, 0);
+const NOW = new Date(Date.UTC(2026, 5, 15, 12, 0, 0));
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const drawCursor = () => {
+    const cursor = document.createElement('div');
+    cursor.style.cssText = [
+        'position:fixed',
+        'z-index:9999',
+        'width:18px',
+        'height:18px',
+        'margin:-9px 0 0 -9px',
+        'border-radius:50%',
+        'background:rgba(28,35,49,.28)',
+        'border:2px solid rgba(28,35,49,.65)',
+        'pointer-events:none',
+    ].join(';');
 
-let browser = null;
-
-process.on('SIGINT', () => {
-    browser?.kill();
-    process.exit(130);
-});
-process.on('SIGTERM', () => {
-    browser?.kill();
-    process.exit(143);
-});
-
-const waitFor = async (check, { timeout = 30000, every = 200 } = {}) => {
-    const deadline = Date.now() + timeout;
-    for (;;) {
-        const value = await check();
-        if (value) {
-            return value;
-        }
-        if (Date.now() > deadline) {
-            throw new Error('timed out waiting for condition');
-        }
-        await sleep(every);
-    }
-};
-
-const startChrome = async () => {
-    const userDataDir = await mkdtemp(join(tmpdir(), 'calendar-record-'));
-    browser = spawn(CHROME, [
-        '--headless=new',
-        '--disable-gpu',
-        '--no-first-run',
-        '--no-default-browser-check',
-        '--hide-scrollbars',
-        '--remote-debugging-port=0',
-        `--user-data-dir=${userDataDir}`,
-        'about:blank',
-    ]);
-
-    const portFile = join(userDataDir, 'DevToolsActivePort');
-    const port = await waitFor(async () => {
-        try {
-            const [line] = (await readFile(portFile, 'utf8')).split('\n');
-            return line || null;
-        } catch {
-            return null;
-        }
-    });
-
-    const target = await waitFor(async () => {
-        const res = await fetch(`http://127.0.0.1:${port}/json/list`);
-        const targets = await res.json();
-        return targets.find((t) => t.type === 'page') ?? null;
-    });
-
-    return { userDataDir, wsUrl: target.webSocketDebuggerUrl };
-};
-
-const connect = async (wsUrl) => {
-    const socket = new WebSocket(wsUrl);
-    await new Promise((resolve, reject) => {
-        socket.addEventListener('open', resolve, { once: true });
-        socket.addEventListener('error', reject, { once: true });
-    });
-
-    let nextId = 0;
-    const pending = new Map();
-    const listeners = [];
-
-    socket.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-        if (message.id !== undefined) {
-            const entry = pending.get(message.id);
-            pending.delete(message.id);
-            if (message.error) {
-                entry.reject(new Error(message.error.message));
-            } else {
-                entry.resolve(message.result);
-            }
-            return;
-        }
-        listeners.forEach((fn) => fn(message));
-    });
-
-    const send = (method, params = {}) =>
-        new Promise((resolve, reject) => {
-            const id = (nextId += 1);
-            pending.set(id, { resolve, reject });
-            socket.send(JSON.stringify({ id, method, params }));
-        });
-
-    const once = (method) =>
-        new Promise((resolve) => {
-            const fn = (message) => {
-                if (message.method === method) {
-                    listeners.splice(listeners.indexOf(fn), 1);
-                    resolve(message.params);
-                }
-            };
-            listeners.push(fn);
-        });
-
-    return { send, once, close: () => socket.close() };
-};
-
-// Runs before any page script: pins the clock so the recording always shows the
-// same month, and adds a synthetic pointer, since CDP input events move no
-// visible cursor.
-const preamble = `
-(() => {
-    const BASE = ${NOW};
-    const RealDate = Date;
-    class PinnedDate extends RealDate {
-        constructor(...args) {
-            if (args.length === 0) {
-                super(BASE);
-            } else {
-                super(...args);
-            }
-        }
-        static now() {
-            return BASE;
-        }
-    }
-    globalThis.Date = PinnedDate;
-
-    const draw = () => {
-        const cursor = document.createElement('div');
-        cursor.style.cssText = [
-            'position:fixed',
-            'z-index:9999',
-            'width:18px',
-            'height:18px',
-            'margin:-9px 0 0 -9px',
-            'border-radius:50%',
-            'background:rgba(28,35,49,.28)',
-            'border:2px solid rgba(28,35,49,.65)',
-            'pointer-events:none',
-        ].join(';');
+    const attach = () => {
         document.body.appendChild(cursor);
-
         globalThis.__cursor = (x, y) => {
-            cursor.style.left = x + 'px';
-            cursor.style.top = y + 'px';
-            cursor.style.opacity = '1';
+            cursor.style.left = `${x}px`;
+            cursor.style.top = `${y}px`;
         };
         globalThis.__press = (down) => {
             cursor.style.transform = down ? 'scale(.75)' : 'scale(1)';
@@ -207,12 +79,11 @@ const preamble = `
     };
 
     if (document.body) {
-        draw();
+        attach();
     } else {
-        document.addEventListener('DOMContentLoaded', draw);
+        document.addEventListener('DOMContentLoaded', attach);
     }
-})();
-`;
+};
 
 const run = async () => {
     try {
@@ -228,63 +99,39 @@ const run = async () => {
         }
     }
 
-    const chrome = await startChrome();
-    let cdp;
+    const browser = await chromium.launch({ executablePath: CHROME });
     let frame = 0;
 
     try {
-        cdp = await connect(chrome.wsUrl);
-        await cdp.send('Page.enable');
-        await cdp.send('Runtime.enable');
-        await cdp.send('Emulation.setDeviceMetricsOverride', {
-            width: WIDTH,
-            height: HEIGHT,
+        const page = await browser.newPage({
+            viewport: { width: WIDTH, height: HEIGHT },
             deviceScaleFactor: SCALE,
-            mobile: false,
         });
-        await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: preamble });
 
-        const loaded = cdp.once('Page.loadEventFired');
-        await cdp.send('Page.navigate', { url: DEMO_URL });
-        await loaded;
-        await sleep(600);
-
-        const evaluate = async (expression) => {
-            const { result, exceptionDetails } = await cdp.send('Runtime.evaluate', {
-                expression,
-                returnByValue: true,
-            });
-            if (exceptionDetails) {
-                throw new Error(`${exceptionDetails.text}: ${expression.trim().slice(0, 60)}`);
-            }
-            return result.value;
-        };
+        await page.clock.setFixedTime(NOW);
+        await page.addInitScript(drawCursor);
+        await page.goto(DEMO_URL);
+        await page.waitForTimeout(600);
 
         const capture = async (count = 1) => {
             for (let i = 0; i < count; i += 1) {
-                const { data } = await cdp.send('Page.captureScreenshot', { format: 'png' });
                 const name = String(frame).padStart(4, '0');
                 frame += 1;
-                await writeFile(join(FRAMES, `${name}.png`), Buffer.from(data, 'base64'));
+                await page.screenshot({ path: join(FRAMES, `${name}.png`) });
             }
         };
 
-        const centres = await evaluate(`
-            (() => {
-                const box = (el) => {
-                    const r = el.getBoundingClientRect();
-                    return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) };
-                };
-                return {
-                    days: [...document.querySelectorAll('.nav__calendar button')].map(box),
-                    next: box(document.querySelectorAll('.nav__button')[1]),
-                };
-            })()
-        `);
+        const centre = async (locator) => {
+            const box = await locator.boundingBox();
+            return { x: Math.round(box.x + box.width / 2), y: Math.round(box.y + box.height / 2) };
+        };
+
+        const days = page.locator('.nav__calendar button');
+        const next = page.locator('.nav__button').nth(1);
 
         const moveTo = async (x, y) => {
-            await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y });
-            await evaluate(`__cursor(${x}, ${y})`);
+            await page.mouse.move(x, y);
+            await page.evaluate(([px, py]) => globalThis.__cursor(px, py), [x, y]);
         };
 
         const glide = async (from, to, steps) => {
@@ -299,18 +146,17 @@ const run = async () => {
         };
 
         const click = async ({ x, y }) => {
-            const button = { button: 'left', clickCount: 1, x, y };
-            await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...button });
-            await evaluate('__press(true)');
+            await page.mouse.down();
+            await page.evaluate(() => globalThis.__press(true));
             await capture(2);
-            await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...button });
-            await evaluate('__press(false)');
+            await page.mouse.up();
+            await page.evaluate(() => globalThis.__press(false));
             await capture(2);
         };
 
-        // 8 June and 19 June 1970-style offsets: indices into the rendered grid
-        const first = centres.days[8];
-        const last = centres.days[19];
+        const first = await centre(days.nth(8));
+        const last = await centre(days.nth(19));
+        const nextCentre = await centre(next);
         const start = { x: first.x - 140, y: first.y + 90 };
 
         await moveTo(start.x, start.y);
@@ -325,19 +171,13 @@ const run = async () => {
         await click(last);
         await capture(16);
 
-        await glide(last, centres.next, 14);
-        await click(centres.next);
+        await glide(last, nextCentre, 14);
+        await click(nextCentre);
         await capture(16);
 
         process.stdout.write(`${frame} frames -> ${FRAMES}\n`);
     } finally {
-        cdp?.close();
-        browser.kill();
-        if (browser.exitCode === null) {
-            await new Promise((resolve) => browser.once('exit', resolve));
-        }
-        const cleanup = { recursive: true, force: true, maxRetries: 10, retryDelay: 200 };
-        await rm(chrome.userDataDir, cleanup);
+        await browser.close();
     }
 };
 
